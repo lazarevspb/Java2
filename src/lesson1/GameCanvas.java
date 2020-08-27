@@ -9,6 +9,7 @@ public class GameCanvas extends JPanel {
 
     GameCanvas(MainCircles controller) {
         this.controller = controller;
+
 //        setBackground(Color.MAGENTA); // TODO: 26.08.2020 удалить
         lastFrameTime = System.nanoTime();
     }
