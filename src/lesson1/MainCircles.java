@@ -20,6 +20,7 @@ public class MainCircles extends JFrame {
     private static final int POS_Y = 200;
     private static final int WINDOW_WIDTH = 800;
     private static final int WINDOW_HEIGHT = 600;
+    int spriteArrayLength = 10;
     Background background;
 
     public static void main(String[] args) {
@@ -32,7 +33,7 @@ public class MainCircles extends JFrame {
 
     }
 
-    Sprite[] sprites = new  Sprite[10];
+    Sprite[] sprites = new Sprite[spriteArrayLength];
 
     private MainCircles() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -40,38 +41,70 @@ public class MainCircles extends JFrame {
         GameCanvas canvas = new GameCanvas(this);
         add(canvas, BorderLayout.CENTER);
         background = new Background();
-        initApplication();
+        initApplication(sprites);
         setTitle("Шарики");
         setVisible(true);
-
     }
 
-    private void initApplication(){
-        for (int i = 0; i < sprites.length ; i++) {
-            sprites[i] = new Ball();
+    private void initApplication(Sprite[] arraySprites) {
+        for (int i = 0; i < arraySprites.length; i++) {
+            arraySprites[i] = new Ball();
         }
     }
 
-    public void onDrawFrame(GameCanvas canvas, Graphics g, float deltaTime){
-
-        update(canvas, deltaTime);
-        render(canvas, g);
+    private void updInitApplication2(Sprite[] arraySprites) {
+        for (int i = arraySprites.length - 10; i < arraySprites.length; i++) {
+            arraySprites[i] = new Ball();
+        }
     }
 
-    private void update(GameCanvas canvas, float deltaTime){
-        for(int i = 0; i < sprites.length; i++){
-            sprites[i].update(canvas, deltaTime);
+    public void onDrawFrame(GameCanvas canvas, Graphics g, float deltaTime, int addDeleteBall) {
+        update(canvas, deltaTime, sprites);
+        render(canvas, g, addDeleteBall);
+    }
 
+    private void update(GameCanvas canvas, float deltaTime, Sprite[] arraySprites) {
+        for (int i = 0; i < arraySprites.length; i++) {
+            arraySprites[i].update(canvas, deltaTime);
         }
         background.changeColor(canvas, deltaTime);
-
     }
 
-     private void render(GameCanvas canvas, Graphics g){
-         for (int i = 0; i < sprites.length; i++) {
-             sprites[i].render(canvas, g);
-         }
+    private void render(GameCanvas canvas, Graphics g, int addDeleteBall) {
+        if (sprites.length + addDeleteBall - sprites.length > sprites.length - 1) {
+            increaseNewArraySprite();
+            updInitApplication2(sprites);
+        }
+        if (addDeleteBall > 0 && (sprites.length + addDeleteBall - sprites.length < sprites.length)) {
+            for (int i = 0; i < sprites.length + addDeleteBall - sprites.length; i++) {
+                sprites[i].render(canvas, g);
+            }
+        }
+        if (addDeleteBall == 0) {
+            for (int i = 0; i < sprites.length - sprites.length; i++) {
+                sprites[i].render(canvas, g);
+            }
+        }
+        if (addDeleteBall < 0) {
+            for (int i = 0; i < sprites.length + addDeleteBall - sprites.length; i++) {
+                sprites[i].render(canvas, g);
+            }
+            if (sprites.length + addDeleteBall - sprites.length < sprites.length) {
+            }
+        } else {
+        }
+    }
 
-     }
-
+    private void increaseNewArraySprite() {
+        Sprite[] sprites2;
+        spriteArrayLength += 10;
+        sprites2 = new Sprite[sprites.length];
+        for (int i = 0; i < sprites.length; i++) {
+            sprites2[i] = sprites[i];
+        }
+        sprites = new Sprite[spriteArrayLength];
+        for (int i = 0; i < sprites2.length; i++) {
+            sprites[i] = sprites2[i];
+        }
+    }
 }
