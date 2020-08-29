@@ -30,10 +30,15 @@ public class Ball extends Sprite {
 
     @Override
     public void render(GameCanvas canvas, Graphics g) {
-        super.render(canvas, g);
         g.setColor(color);
         g.fillOval((int) getLeft(), (int) getTop(),
                 (int) getWidth(), (int) getHeight());
+    }
+
+    Ball(int x, int y) {
+        this();
+        this.x = x;
+        this.y = y;
     }
 
     Ball() {
