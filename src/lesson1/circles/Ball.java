@@ -1,30 +1,34 @@
-package lesson1;
+package lesson1.circles;
+
+import lesson1.common.GameCanvas;
+import lesson1.common.Sprite;
 
 import java.awt.*;
 
 public class Ball extends Sprite {
     private final Color color;
-    private  float vX;
-    private  float vY;
+    private float vX;
+    private float vY;
 
     @Override
     public void update(GameCanvas canvas, float deltaTime) {
         x += vX * deltaTime;
         y += vY * deltaTime;
-        if(getLeft()< canvas.getLeft()){
+        if (getLeft() < canvas.getLeft()) {
             setLeft(canvas.getLeft());
-            vX  = -vX;
+            vX = -vX;
         }
-        if(getRight()> canvas.getRight()){
+        if (getRight() > canvas.getRight()) {
+            setRight(canvas.getRight());
             vX = -vX;
         }
         if (getTop() < canvas.getTop()) {
-        setTop(canvas.getTop());
-        vY = -vY;
+            setTop(canvas.getTop());
+            vY = -vY;
         }
-        if (getBottom()> canvas.getBottom()){
+        if (getBottom() > canvas.getBottom()) {
             setBottom(canvas.getBottom());
-            vY  = -vY;
+            vY = -vY;
         }
     }
 
@@ -48,7 +52,7 @@ public class Ball extends Sprite {
                 (int) (Math.random() * 255),
                 (int) (Math.random() * 255),
                 (int) (Math.random() * 255));
-    vX = (float)(100f + (Math.random()*200f));
-    vY = (float)(100f + (Math.random()*200f));
+        vX = (float) (100f + (Math.random() * 200f));
+        vY = (float) (100f + (Math.random() * 200f));
     }
 }

@@ -1,16 +1,16 @@
-package lesson1;
+package lesson1.common;
+
+import lesson1.circles.MainCircles;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class GameCanvas extends JPanel {
     private long lastFrameTime;
-    private MainCircles controller;
+    private CanvasListener controller;
 
-
-    GameCanvas(MainCircles controller) {
+    public GameCanvas(CanvasListener controller) {
         this.controller = controller;
-
         lastFrameTime = System.nanoTime();
     }
 
@@ -31,8 +31,6 @@ public class GameCanvas extends JPanel {
 
     /**
      * Левая граница канвы;
-     *
-     *
      */
     public int getLeft() {
         return 0;
