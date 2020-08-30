@@ -1,4 +1,8 @@
 /target
 /.idea
 *.iml
-/test
+/src/test
+/src/src/draft
+/out
+/src/META-INF
+/test.lesson2
