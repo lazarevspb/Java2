@@ -4,8 +4,8 @@ package lesson2.exception;
 /**
  * Класс исключения, если размер матрицы, полученной из строки, не равен 4x4;
  */
-public class ArraySizeDoesNotMatchFourByFourException extends Exception {
-    public ArraySizeDoesNotMatchFourByFourException(String message) {
+public class SizeDoesNotMatchFourByFourException extends IndexOutOfBoundsException {
+    public SizeDoesNotMatchFourByFourException(String message) {
         super(message);
     }
 }

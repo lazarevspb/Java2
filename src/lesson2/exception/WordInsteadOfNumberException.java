@@ -4,8 +4,8 @@ package lesson2.exception;
 /**
  * Класс исключения, если в одной из ячеек полученной матрицы не число; (например символ или слово)
  */
-public class WordInsteadOfNumber extends Exception {
-    public WordInsteadOfNumber(String message) {
+public class WordInsteadOfNumberException extends IllegalArgumentException {
+    public WordInsteadOfNumberException(String message) {
         super(message);
     }
 }

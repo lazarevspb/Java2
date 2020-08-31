@@ -1,8 +1,7 @@
 package lesson2;
 
-import lesson2.exception.ArraySizeDoesNotMatchFourByFourException;
-import lesson2.exception.WordInsteadOfNumber;
-import src.draft.UtilMethod;
+import lesson2.exception.SizeDoesNotMatchFourByFourException;
+import lesson2.exception.WordInsteadOfNumberException;
 
 /**
  * Homework for lesson #2
@@ -34,27 +33,28 @@ import src.draft.UtilMethod;
  * @since 29.08.2020
  */
 
-public class Main extends UtilMethod {
-    private static String[][] stringArray;
+public class Main {
     private static final String stringResources = "10 3 1 2\n2 3 2 2\n5 6 7 1\n300 3 1 0";
-    private static int[][] numeric;
-    public static int sumNumbers;
-    public static float result;
+    private static String[][] stringArray;
+    private static int[][] numericArray;
+
 
     public static void main(String[] args) {
         /*Написать метод, на вход которого подаётся такая строка,
          * метод должен преобразовать строку в двумерный массив типа String[][];*/
-        stringArray = stringToArrayStringConvert(stringResources);
+        stringArray = toArrayStringConvert(stringResources);
 
         /*4. В методе main необходимо вызвать полученные методы,
          * обработать возможные исключения */
         try {
-            numeric = stringConvertToNumber(stringArray);
-        } catch (ArraySizeDoesNotMatchFourByFourException | WordInsteadOfNumber e) {
+            numericArray = stringToNumberConvert(stringArray);
+        } catch (SizeDoesNotMatchFourByFourException | WordInsteadOfNumberException e) {
             e.printStackTrace();
         }
         /*просуммировать*/
-        sumNumbers = sumTheNumbers(numeric);
+        int sumNumbers;
+        float result;
+        sumNumbers = sumTheNumbers(numericArray);
         /*поделить полученную сумму на 2*/
         result = divisionOfNumbers(sumNumbers);
         /*и вывести результат расчета.*/
@@ -66,9 +66,8 @@ public class Main extends UtilMethod {
      *
      * @param i целочисленная переменнаяж
      * @return возвращает число с плавающей точкой;
-     * @throws ArithmeticException при делении на ноль выбрасывает исключение;
      */
-    public static float divisionOfNumbers(int i) throws ArithmeticException {
+    public static float divisionOfNumbers(int i) {
         return i / 2f;
     }
 
@@ -93,17 +92,17 @@ public class Main extends UtilMethod {
      *
      * @param stringArray двумерный массив строк содержащий числа;
      * @return двумерный массив чисе;
-     * @throws ArraySizeDoesNotMatchFourByFourException выкидывает исключение, если размер матрицы,
-     *                                                  полученной из строки, не равен 4x4;
-     * @throws WordInsteadOfNumber                      выкидывает исключение если в одной из ячеек
-     *                                                  полученной матрицы не число; (например символ или слово);
+     * @throws SizeDoesNotMatchFourByFourException выкидывает исключение, если размер матрицы,
+     *                                             полученной из строки, не равен 4x4;
+     * @throws WordInsteadOfNumberException        выкидывает исключение если в одной из ячеек
+     *                                             полученной матрицы не число; (например символ или слово);
      */
-    private static int[][] stringConvertToNumber(String[][] stringArray)
-            throws ArraySizeDoesNotMatchFourByFourException, WordInsteadOfNumber {
+    public static int[][] stringToNumberConvert(String[][] stringArray)
+            throws SizeDoesNotMatchFourByFourException, WordInsteadOfNumberException {
         int[][] resultArray;
 
 
-        if (stringArray.length == 4 && stringArray[0].length == 4) {
+        if (isFourByFour(stringArray)) {
             resultArray = new int[stringArray.length][stringArray[0].length];
             for (int i = 0; i < stringArray.length; i++) {
                 for (int j = 0; j < stringArray[i].length; j++) {
@@ -111,12 +110,12 @@ public class Main extends UtilMethod {
                     if (stringArray[i][j].matches("\\d+")) { //Проверяет является ли строка числом
                         resultArray[i][j] = Integer.parseInt(stringArray[i][j]);
                     } else {
-                        throw new WordInsteadOfNumber("The array contains a Word instead of a digit.");
+                        throw new WordInsteadOfNumberException("The array contains a Word instead of a digit.");
                     }
                 }
             }
         } else {
-            throw new ArraySizeDoesNotMatchFourByFourException("array size does not match four by four.");
+            throw new SizeDoesNotMatchFourByFourException("array size does not match four by four.");
         }
         return resultArray;
     }
@@ -128,7 +127,7 @@ public class Main extends UtilMethod {
      * @param stringResources строковый ресурс;
      * @return результат работы метода - двумерный массив.
      */
-    private static String[][] stringToArrayStringConvert(String stringResources) {
+    public static String[][] toArrayStringConvert(String stringResources) {
         String[] tempArray;
         tempArray = stringResources.split("\n");
         String[][] tempMultyStringArray = new String[tempArray.length][tempArray[0].length() / 2];
@@ -136,5 +135,14 @@ public class Main extends UtilMethod {
             tempMultyStringArray[i] = tempArray[i].split(" ");
         }
         return tempMultyStringArray;
+    }
+
+    public static boolean isFourByFour(String[][] array) {
+        for (String[] strings : array) {
+            if (strings.length != 4 || array.length != 4) {
+                return false;
+            }
+        }
+        return true;
     }
 }
