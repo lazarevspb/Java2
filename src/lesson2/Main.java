@@ -97,26 +97,18 @@ public class Main {
      * @throws WordInsteadOfNumberException        выкидывает исключение если в одной из ячеек
      *                                             полученной матрицы не число; (например символ или слово);
      */
-    public static int[][] stringToNumberConvert(String[][] stringArray)
-            throws SizeDoesNotMatchFourByFourException, WordInsteadOfNumberException {
+    public static int[][] stringToNumberConvert(String[][] stringArray) {
         int[][] resultArray;
-
-
-        if (isFourByFour(stringArray)) {
             resultArray = new int[stringArray.length][stringArray[0].length];
             for (int i = 0; i < stringArray.length; i++) {
                 for (int j = 0; j < stringArray[i].length; j++) {
-
-                    if (stringArray[i][j].matches("\\d+")) { //Проверяет является ли строка числом
+                    try {
                         resultArray[i][j] = Integer.parseInt(stringArray[i][j]);
-                    } else {
+                    } catch (NumberFormatException e) {
                         throw new WordInsteadOfNumberException("The array contains a Word instead of a digit.");
                     }
                 }
             }
-        } else {
-            throw new SizeDoesNotMatchFourByFourException("array size does not match four by four.");
-        }
         return resultArray;
     }
 
@@ -130,19 +122,13 @@ public class Main {
     public static String[][] toArrayStringConvert(String stringResources) {
         String[] tempArray;
         tempArray = stringResources.split("\n");
-        String[][] tempMultyStringArray = new String[tempArray.length][tempArray[0].length() / 2];
+        String[][] tempMultyStringArray = new String[tempArray.length][];
         for (int i = 0; i < tempArray.length; i++) {
             tempMultyStringArray[i] = tempArray[i].split(" ");
+            if(tempMultyStringArray.length != 4)
+                throw new SizeDoesNotMatchFourByFourException("array size does not match four by four.");
+
         }
         return tempMultyStringArray;
-    }
-
-    public static boolean isFourByFour(String[][] array) {
-        for (String[] strings : array) {
-            if (strings.length != 4 || array.length != 4) {
-                return false;
-            }
-        }
-        return true;
     }
 }
