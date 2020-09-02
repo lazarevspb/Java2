@@ -22,7 +22,7 @@ public abstract class Sprite implements GameObject {
 
     protected void setRight(float right) {
         x = right - halfWidth;
-    } // TODO: 29.08.2020 не вызываемый метод 
+    }
 
     protected float getTop() {
         return y - halfHeight;
