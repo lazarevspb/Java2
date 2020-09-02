@@ -1,5 +1,6 @@
 package lesson3;
 
+<<<<<<< HEAD
 /**
  * Homework for lesson #3
  *
@@ -23,5 +24,7 @@ package lesson3;
  */
 
 
+=======
+>>>>>>> origin/lesson3
 public class Main {
 }
