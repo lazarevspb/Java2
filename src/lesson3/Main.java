@@ -32,8 +32,7 @@ public class Main {
     public static void main(String[] args) {
 
         /*Найти и вывести список уникальных слов, из которых состоит массив (дубликаты не считаем)*/
-        TreeSet<String> treeSet = new TreeSet<>();
-        treeSet.addAll(Arrays.asList(StringResources.stringResources));
+        TreeSet<String> treeSet = new TreeSet<>(Arrays.asList(StringResources.stringResources));
         System.out.println(treeSet.toString());
 
 
@@ -53,29 +52,31 @@ public class Main {
 
         /* В этот телефонный справочник с помощью метода add() можно
          * добавлять записи. */
-        phoneBook.add("Василий", "555-5555");
-        phoneBook.add("Викантин", "333-3333");
-        phoneBook.add("Йован", "444-444");
-        phoneBook.add("Кузнецо", "111-1111");
-        phoneBook.add("Кузнецо", "444-4444");
+        phoneBook.add("ivanov", "555-5555");
+        phoneBook.add("petrov", "333-3333");
+        phoneBook.add("sidorov", "444-444");
+        phoneBook.add("pavlov", "111-1111");
+        phoneBook.add("pavlov", "444-4444");
 
         /*С помощью метода get() искать номер телефона по фамилии.*/
-        System.out.println(phoneBook.get("Йован"));
+        System.out.println("Pavlov: " + phoneBook.get("pavlov"));
 
         System.out.println(phoneBook.toString());
+
+        System.out.println("sidorov: " + phoneBook.get("sidorov"));
     }
 
     private static Map<String, Integer> wordCount(Collection<String> treeSet) {
-        ArrayList<String> list = new ArrayList<>();
         Map<String, Integer> map = new HashMap<>();
-        list.addAll(treeSet);
+        ArrayList<String> list = new ArrayList<>(treeSet);
 
         for (int i = 0; i < StringResources.stringResources.length; i++) {
-            if (list.contains(StringResources.stringResources[i])) {
-                if (map.get(StringResources.stringResources[i]) != null) {
-                    map.put(StringResources.stringResources[i], map.get(StringResources.stringResources[i]) + 1);
+            String word = StringResources.stringResources[i];
+            if (list.contains(word)) {
+                if (map.get(word) != null) {
+                    map.put(word, map.get(word) + 1);
                 } else {
-                    map.put(StringResources.stringResources[i], 1);
+                    map.put(word, 1);
                 }
             }
         }
