@@ -73,11 +73,7 @@ public class Main {
         for (int i = 0; i < StringResources.stringResources.length; i++) {
             String word = StringResources.stringResources[i];
             if (list.contains(word)) {
-                if (map.get(word) != null) {
-                    map.put(word, map.get(word) + 1);
-                } else {
-                    map.put(word, 1);
-                }
+                map.merge(word, 1, Integer::sum);//
             }
         }
         return map;

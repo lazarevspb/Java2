@@ -5,9 +5,9 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Homework for lesson #4
@@ -20,7 +20,7 @@ import java.io.FileNotFoundException;
  * @since 06.09.2020
  */
 
-public class ClientGUI extends JFrame implements ActionListener, Thread.UncaughtExceptionHandler, KeyListener {
+public class ClientGUI extends JFrame implements ActionListener, Thread.UncaughtExceptionHandler {
     private static final int WIDTH = 400;
     private static final int HEIGHT = 300;
     private static final int BORDER_SIZE = 5;
@@ -40,16 +40,22 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
     private final JButton btnSend = new JButton("Send");
     private final JList<String> userList = new JList();
     private LogFile logFile = new LogFile("log");
+    private boolean shownIoErrors = false;
 
-    public static void main(String[] args) throws FileNotFoundException {
-        new ClientGUI();
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(ClientGUI::new);
     }
 
-    private ClientGUI() throws FileNotFoundException {
+    private ClientGUI() {
 
         if (logFile.exists()) {
-            logFile.readTextFile(tfMessage.getText());
-            log.setText(logFile.readFile("log"));
+            try {
+                logFile.addTextToFile(tfMessage.getText());
+                log.setText(logFile.readFile("log"));
+                log.setCaretPosition(log.getDocument().getLength());
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException("File log not found");
+            }
         }
 
         Thread.setDefaultUncaughtExceptionHandler(this);
@@ -69,7 +75,8 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
         scrollUsers.setPreferredSize(new Dimension(100, 0));
         cbAlwaysOnTop.addActionListener(this);
         btnSend.addActionListener(this);
-        tfMessage.addKeyListener(this);
+//        tfMessage.addKeyListener(this);
+        tfMessage.addActionListener(this);
 
         tfMessage.setBorder(getBorder());
         log.setBorder(getBorder());
@@ -111,48 +118,59 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
         Object src = e.getSource(); //Возвращает обект который создал ActionEvent
         if (src == cbAlwaysOnTop)
             setAlwaysOnTop(cbAlwaysOnTop.isSelected());
-        else if (src == btnSend)
-            keyReleased(new KeyEvent(this, KeyEvent.VK_ENTER, System.currentTimeMillis(),
-                    KeyEvent.VK_ENTER, '\n', '\n'));
+        else if (src == btnSend || src == tfMessage)
+            sendMessage();
         else
             throw new RuntimeException("Unknown source: " + src);
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
+    private void sendMessage() {
+        String msg = tfMessage.getText();
+        String username = tfLogin.getText();
+        if ("".equals(msg)) return;
+        tfMessage.setText(null);
+        tfMessage.grabFocus();
+        putLog(String.format("%s: %s", username, msg));
+        wrtMsgToLogFile(msg, username);
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        if (e.getKeyChar() == KeyEvent.VK_ENTER
-        ) {
-            try {
-                if (logFile.exists()) {
-                    logFile.readTextFile(tfMessage.getText());
-                    log.setText(logFile.readFile("log"));
-                } else {
-                    logFile.createTextFile(tfMessage.getText());
-                }
-            } catch (FileNotFoundException fileNotFoundException) {
-                throw new RuntimeException("File not found");
+    private void wrtMsgToLogFile(String msg, String username) {
+        try (FileWriter out = new FileWriter("log", true)) {
+            out.write(username + ": " + msg + "\n");
+            out.flush();
+        } catch (IOException e) {
+            if (!shownIoErrors) {
+                shownIoErrors = true;
+                showException(Thread.currentThread(), e);
             }
-            tfMessage.setText("");
         }
+    }
+
+    private void putLog(String msg) {
+        if ("".equals(msg)) return;
+        SwingUtilities.invokeLater(() -> {
+            log.append(msg + "\n");
+            log.setCaretPosition(log.getDocument().getLength());//Устанавливает каретку на конец документа
+        });
+    }
+
+    private void showException(Thread t, Throwable e) {
+        String msg;
+        StackTraceElement[] ste = e.getStackTrace();
+        if (ste.length == 0)
+            msg = "Empty Stacktrace";
+        else {
+            msg = String.format("Exception in \"%s\" %s: %s\n\tat %s",
+                    t.getName(), e.getClass().getCanonicalName(), e.getMessage(), ste[0]);
+            JOptionPane.showMessageDialog(this, msg, "Exception", JOptionPane.ERROR_MESSAGE);
+        }
+        JOptionPane.showMessageDialog(null, msg, "Exception", JOptionPane.ERROR_MESSAGE);
     }
 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
         e.printStackTrace();
-        String msg;
-        StackTraceElement[] ste = e.getStackTrace();
-        msg = "Exception in " + t.getName() + " " +
-                e.getClass().getCanonicalName() + ": " +
-                e.getMessage() + "\n\t at" + ste[0];
-        JOptionPane.showMessageDialog(this, msg, "Exception", JOptionPane.ERROR_MESSAGE);
+        showException(t, e);
         System.exit(1);
     }
 }

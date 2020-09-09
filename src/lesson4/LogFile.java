@@ -35,7 +35,7 @@ public class LogFile extends File {
         return file.exists();
     }
 
-    protected boolean readTextFile(String content) throws FileNotFoundException {
+    protected boolean addTextToFile(String content) throws FileNotFoundException {
         String s;
         File file = new File(this.nameFile);
         s = readFile(this.nameFile);
