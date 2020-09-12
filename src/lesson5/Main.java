@@ -8,14 +8,22 @@ import java.util.Arrays;
  */
 
 public class Main {
-    static final int SIZE = 10_000_000;
-    static final int HALF_LENGTH = SIZE / 2;
-    public static void main(String[] args) throws InterruptedException {
+    private static final int SIZE = 10_000_000;
+    private static final int HALF_LENGTH = SIZE / 2;
+    private static float[] result0;
+    private static float[] result1;
 
+    public static void main(String[] args) throws InterruptedException {
         long a = System.currentTimeMillis();
+
         methodOne();
         methodTwo();
-        printingTheSpentTime(a, "total execution time");
+        printingTheSpentTime(a, "Total execution time of two methods");
+
+        a = System.currentTimeMillis();
+
+        System.out.println("Two arrays are " + ((Arrays.equals(result0, result1) ? "equivalent " : "not equivalent")));
+        printingTheSpentTime(a, "Array comparison time: ");
     }
 
     static void methodOne() {
@@ -25,9 +33,9 @@ public class Main {
         fillsThisArrayWithOnes(arr);
 
         long a = System.currentTimeMillis();
-        methodThatCountsSomething(arr);
-
+        methodThatCountsSomething(arr, 0);
         printingTheSpentTime(a, "methodOne");
+        result0 = arr;
     }
 
     private static void methodTwo() throws InterruptedException {
@@ -37,8 +45,8 @@ public class Main {
         float[] a2 = createsAOneDimensionalLongArray(HALF_LENGTH);
 
         long a = System.currentTimeMillis();
-        Thread thread0 = new Thread(() -> assemblyDisassemblyArray(arr, a1, 0));
-        Thread thread1 = new Thread(() -> assemblyDisassemblyArray(arr, a2, HALF_LENGTH));
+        Thread thread0 = new Thread(() -> assemblyDisassemblyArray(arr, a1, 0, 0));
+        Thread thread1 = new Thread(() -> assemblyDisassemblyArray(arr, a2, HALF_LENGTH, HALF_LENGTH));
 
         thread0.start();
         thread1.start();
@@ -47,30 +55,31 @@ public class Main {
         thread1.join();
 
         printingTheSpentTime(a, "methodTwo");
+
+        result1 = arr;
     }
 
     private static void printingTheSpentTime(long a, String text) {
-        System.out.printf("%s: %d ms to run. \n", text, (System.currentTimeMillis() - a));
+        System.out.printf("%s: %dms to run. \n", text, (System.currentTimeMillis() - a));
     }
 
-    private static void assemblyDisassemblyArray(float[] sourceArray, float[] destinationArray, int startingElementIndex) {
+    private static void assemblyDisassemblyArray(float[] sourceArray, float[] destinationArray, int startingElementIndex, int offset) {
         System.arraycopy(sourceArray, startingElementIndex, destinationArray, 0, HALF_LENGTH);
-        methodThatCountsSomething(destinationArray);
+        methodThatCountsSomething(destinationArray, offset);
         System.arraycopy(destinationArray, 0, sourceArray, startingElementIndex, HALF_LENGTH);
     }
 
-    static float[] methodThatCountsSomething(float[] arr) {
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] = (float) (arr[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
+    private static void methodThatCountsSomething(float[] arr, int offset) {
+        for (int i = offset; i < arr.length + offset; i++) {
+            arr[i - offset] = (float) (arr[i - offset] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
         }
-        return arr;
     }
 
-    static void fillsThisArrayWithOnes(float[] arr) {
+    private static void fillsThisArrayWithOnes(float[] arr) {
         Arrays.fill(arr, (float) 1.0);
     }
 
-    static float[] createsAOneDimensionalLongArray(int size) {
+    private static float[] createsAOneDimensionalLongArray(int size) {
         return new float[size];
     }
 }
