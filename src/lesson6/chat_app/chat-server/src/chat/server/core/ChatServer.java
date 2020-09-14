@@ -13,10 +13,7 @@ import java.util.Vector;
 
 public class ChatServer implements ServerSocketThreadListener, SocketThreadListener {
     public Vector<SocketThread> listOfClients = new Vector<>(10);
-    private static   Thread clientTread;
     private ServerSocketThread server;
-    private SocketThread socketThread;
-
     private final DateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm:ss ");
 
     public void start(int port) {
@@ -25,8 +22,6 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
         } else {
             server = new ServerSocketThread(this, "Chat server", port, 2000);
         }
-
-
     }
 
     public void stop() {
@@ -41,13 +36,11 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
         msg = DATE_FORMAT.format(System.currentTimeMillis()) +
                 Thread.currentThread().getName() + ": " + msg;
         System.out.println(msg);
-
     }
 
     /**
      * Server Socket Thread Listener methods
-     * */
-
+     */
     @Override
     public void onServerStart(ServerSocketThread thread) {
         putLog("Server started");
@@ -69,54 +62,43 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
     }
 
     @Override
-    synchronized  public void onSocketAccepted(ServerSocketThread thread, ServerSocket server, Socket socket) {
+    synchronized public void onSocketAccepted(ServerSocketThread thread, ServerSocket server, Socket socket) {
         // client connected
 
         String name = "Client " + socket.getInetAddress() + ":" + socket.getPort();
-//        clientTread = new SocketThread(this, name, socket);
         listOfClients.add(new SocketThread(this, name, socket));
         putLog("Client: " + (listOfClients.size()));
 
-                if((listOfClients.size()) > 1){
+        if ((listOfClients.size()) > 1) {
             broadcastMessage("New user connected");
         }
     }
 
-
     @Override
     public void onServerException(ServerSocketThread thread, Throwable exception) {
         exception.printStackTrace();
-        System.out.println ("onServerException 222222222222222" + getClass().getName() );
     }
 
     @Override
-   synchronized public void broadcastMessage(String msg) {
-
-//        for (int i = listOfClients.size()-1; i > -1 ; i--) {
-//            if(listOfClients.get(i) != null) listOfClients.get(i).sendMessage(msg);
-//        }
-
-
+    synchronized public void broadcastMessage(String msg) {
         for (SocketThread socketThread : listOfClients
-             ) if(socketThread != null) { socketThread.sendMessage(msg);
-
-        }
-
+        )
+            if (socketThread != null) {
+                socketThread.sendMessage(msg);
+            }
     }
-
 
     /**
      * Socket Thread Listener methods
-     * */
-
+     */
     @Override
     public void onSocketStart(SocketThread thread, Socket socket) {
         putLog("Client thread started");
     }
 
     @Override
-    synchronized  public void onSocketStop(SocketThread thread) {
-        listOfClients.remove(listOfClients.size()-1);
+    synchronized public void onSocketStop(SocketThread thread) {
+        listOfClients.remove(listOfClients.size() - 1);
         thread.close();
         putLog("Client thread stopped " + (listOfClients.size()));
         broadcastMessage("User disconnected ");
@@ -124,7 +106,6 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
 
     @Override
     public void onSocketReady(SocketThread thread, Socket socket) {
-
         putLog("Client is ready to chat");
     }
 
@@ -135,7 +116,6 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
 
     @Override
     public void onSocketException(SocketThread thread, Exception exception) {
-        System.out.println("onSocketException 1111111111111111" + getClass().getName() );
         exception.printStackTrace();
     }
 }
