@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 /**
- * Homework for lesson #6
+ * Homework for lesson #7
  *
  * @author Valeriy Lazarev
  * @since 14.09.2020
