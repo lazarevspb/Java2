@@ -63,15 +63,20 @@ public class Main {
         System.out.printf("%s: %dms to run. \n", text, (System.currentTimeMillis() - a));
     }
 
-    private static void assemblyDisassemblyArray(float[] sourceArray, float[] destinationArray, int startingElementIndex, int offset) {
-        System.arraycopy(sourceArray, startingElementIndex, destinationArray, 0, HALF_LENGTH);
+    private static void assemblyDisassemblyArray(float[] sourceArray,
+                                                 float[] destinationArray, int startingElementIndex, int offset) {
+        System.arraycopy(sourceArray, startingElementIndex,
+                destinationArray, 0, HALF_LENGTH);
         methodThatCountsSomething(destinationArray, offset);
         System.arraycopy(destinationArray, 0, sourceArray, startingElementIndex, HALF_LENGTH);
     }
 
     private static void methodThatCountsSomething(float[] arr, int offset) {
         for (int i = offset; i < arr.length + offset; i++) {
-            arr[i - offset] = (float) (arr[i - offset] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
+            arr[i - offset] = (float) (arr[i - offset] *
+                    Math.sin(0.2f + i / 5) *
+                    Math.cos(0.2f + i / 5) *
+                    Math.cos(0.4f + i / 2));
         }
     }
 
